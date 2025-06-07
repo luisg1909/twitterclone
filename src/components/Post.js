@@ -44,7 +44,7 @@ const PostPage = () => {
       return;
     }
 
-    const posts = getFromSession('posts') || [];
+    const posts = getFromSession('postst') || [];
     const newPost = new Post(
       posts.length + 1, // Generate a unique ID for the post
       title,
@@ -55,7 +55,7 @@ const PostPage = () => {
     );
 
     posts.push(newPost);
-    saveToSession('posts', posts);
+    saveToSession('postst', posts);
 
     // Redirect to home with success message
     navigate('/', { state: { message: 'Post created successfully!' } });

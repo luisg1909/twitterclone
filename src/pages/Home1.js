@@ -19,7 +19,7 @@ const Home = () => {
   const navigate = useNavigate();
   const message = location.state?.message;
   const [user, setUser] = useState(null);
-  const posts = getFromSession('posts') || [];
+  const posts = getFromSession('postst') || [];
 
   const [showAttachImage, setShowAttachImage] = useState(false);
   const [path, setPath] = useState(null);
@@ -40,16 +40,16 @@ const Home = () => {
     );
     posts.push(newPost);
 
-    saveToSession('posts', posts);
+    saveToSession('postst', posts);
     window.location.reload(); 
 
   };
 
-  var users = getFromSession("users") || [];
+  var users = getFromSession("userst") || [];
   console.log("users",users)
 
   useEffect(() => {
-    const storedUsers = getFromSession('users') || [];
+    const storedUsers = getFromSession('userst') || [];
     setPath(getCurrentPath()); 
 
     if (storedUsers.length === 0) {
@@ -59,7 +59,7 @@ const Home = () => {
       const currentUser = getCurrentUser();
 
       setUser(currentUser); 
-      users = getFromSession("users") || [];
+      users = getFromSession("userst") || [];
       
     }
   }, []);
@@ -121,28 +121,80 @@ const Home = () => {
           {/* FEED */}
           <div className="col-md-6">
             <div className="card mb-3 p-3">
-              <input className="form-control mb-2" placeholder="What's happening?" />
-              <button className="btn btn-primary btn-sm float-right">Tweet</button>
+              <Form onSubmit={handleSubmit}>
+
+              <input  name="content" value={formData.content}  className="form-control mb-2" placeholder="What's happening?" onChange={(e) => setFormData({ ...formData, content: e.target.value })}  />
+                              
+              {showAttachImage && (
+                    <Form.Group className="mb-4 text-center">
+                      <Form.Label><strong>Select post Picture</strong></Form.Label>
+                      <div className="mb-2">
+                        {formData.image && (
+                          <img
+                            src={`${process.env.PUBLIC_URL}/img/${formData.image}`}
+                            alt="Selected"
+                            style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover' }}
+                          />
+                        )}
+                      </div>
+                      <div className="d-flex justify-content-center gap-3">
+                        {[ '2025-05-26_232223.jpg', '2025-05-26_232236.jpg', '2025-05-26_232330.jpg','2025-05-26_232402.jpg', '2025-05-26_232449.jpg', 'clouds.jpg', '2025-06-07_031734.jpg'].map((pic) => (
+                          <img
+                            key={pic}
+                            src={`${process.env.PUBLIC_URL}/img/${pic}`}
+                            alt={pic}
+                            style={{
+                              width: 60,
+                              height: 60,
+                              borderRadius: '50%',
+                              border: formData.image === pic ? '3px solid #0d6efd' : '2px solid gray',
+                              cursor: 'pointer',
+                              objectFit: 'cover'
+                            }}
+                            onClick={() => setFormData(prev => ({ ...prev, image: pic }))}
+                          />
+                        ))}
+                      </div>
+                    </Form.Group>
+               )}
+
+                <div className="d-flex justify-content-end gap-2 mt-2">
+                  <Button
+                    variant="success"
+                    size="sm"
+                    onClick={() => setShowAttachImage((prev) => !prev)}
+                  >
+                    {showAttachImage ? "Hide Image Picker" : "Attach Image"}
+                  </Button>
+
+                  <Button type="submit" className="btn-sm" variant="primary">
+                    Tweet
+                  </Button>
+                </div>
+              </Form>
             </div>
 
-            <div className="card mb-3 p-3">
-              <strong>Hannah</strong> <span className="text-muted">@gwendalsflow</span>
-              <p>You know what's underrated? The Tarzan soundtrack. Everything Phil Collins does slaps</p>
-            </div>
+            {[...posts]
+              .sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)) // ascending
+              .map((post, index) => {
+                const matchedUser = users.find((u) => u.username === post.username);
+                const profilePic = matchedUser?.ProfilePic || 'default.jpg';
+                const usernameandlastname = `${matchedUser?.Firstname || ''} ${matchedUser?.Lastname || ''}`.trim();
+                return (
+               <div className="card mb-3 p-3">
+                <strong>{usernameandlastname}</strong> <span className="text-muted">@{post.username}</span>
+                <p>{post.content}</p>
+                {post.image && post.image.length > 0 && (
+                        <Image src={`${process.env.PUBLIC_URL}/img/${post.image}`} fluid />
+                      )}
+                <div className="mt-2 text-muted" style={{ fontSize: '0.9rem' }}>
+                        Like · Comment · Share · Retweet
+                </div>
+              </div>  
+                 );
+            })}
 
-            <div className="card mb-3 p-3">
-              <strong>Sanika</strong> <span className="text-muted">@Sanika1020</span>
-              <p>Why did that make me think of this 💀💀</p>
-              <div className="embed-responsive embed-responsive-16by9">
-                <iframe className="embed-responsive-item" src="https://www.youtube.com/embed/ZJfhI0d-B9c" allowFullScreen></iframe>
-              </div>
-            </div>
 
-            <div className="card mb-3 p-3">
-              <strong>@_bakugowo</strong>
-              <p>he's an airhead your honor</p>
-              <img src={`${process.env.PUBLIC_URL}/img/${user.ProfilePic}`}  className="img-fluid" alt="manga" />
-            </div>
           </div>
 
           {/* RIGHT SIDEBAR */}

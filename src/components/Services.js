@@ -4,7 +4,7 @@ import { getFromSession, saveToSession } from '../utils/SessionStorage';
 import { getCurrentUser } from '../utils/Auth';
 
 const Services = () => {
-  const [users, setUsers] = useState(getFromSession('users') || []);
+  const [users, setUsers] = useState(getFromSession('userst') || []);
   const [editingUserId, setEditingUserId] = useState(null); // Track which user is being edited
   const [editableData, setEditableData] = useState({});
   const [sortConfig, setSortConfig] = useState({ key: 'points', direction: 'desc' }); // Default sorting by points descending
@@ -49,7 +49,7 @@ const Services = () => {
       user.username === editingUserId ? { ...editableData } : user
     );
     setUsers(updatedUsers);
-    saveToSession('users', updatedUsers); // Save updated users to sessionStorage
+    saveToSession('userst', updatedUsers); // Save updated users to sessionStorage
     setEditingUserId(null); // Exit editing mode
   };
 
@@ -58,7 +58,7 @@ const Services = () => {
       u.username === user.username ? { ...u, password: 'default123' } : u
     );
     setUsers(updatedUsers);
-    saveToSession('users', updatedUsers); // Save updated users to sessionStorage
+    saveToSession('userst', updatedUsers); // Save updated users to sessionStorage
     alert(`Password for ${user.username} has been reset to "default123".`);
   };
 

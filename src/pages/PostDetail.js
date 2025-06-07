@@ -9,7 +9,7 @@ import { Form, Button, Card } from 'react-bootstrap';
 
 const PostDetail = () => {
   const { postId } = useParams();
-  const posts = getFromSession('posts') || [];
+  const posts = getFromSession('postst') || [];
   const currentUser = getCurrentUser();
 
   const post = posts.find((p) => p.id === Number(postId)) || null;
@@ -20,13 +20,13 @@ const PostDetail = () => {
 
   useEffect(() => {
 
-    const currentPosts = getFromSession('posts') || [];
+    const currentPosts = getFromSession('postst') || [];
     const targetPost = currentPosts.find((p) => p.id === Number(postId));
 
     if (targetPost) {
       if (JSON.stringify(targetPost.comments) !== JSON.stringify(comments)) {
         targetPost.comments = comments; // Update comments in the specific post
-        saveToSession('posts', currentPosts); // Save the entire updated posts array
+        saveToSession('postst', currentPosts); // Save the entire updated posts array
       }
     }
   }, [comments, postId]); 
@@ -56,7 +56,7 @@ const PostDetail = () => {
     setNewComment('');
 
     // Update user points
-    const users = getFromSession('users') || [];
+    const users = getFromSession('userst') || [];
     const userIndex = users.findIndex((u) => u.username === localCurrentUser.username);
 
     if (userIndex !== -1) {
@@ -72,13 +72,13 @@ const PostDetail = () => {
           ...users.slice(userIndex + 1)
       ];
      
-      saveToSession('users', updatedUsers); // Save updated users array
+      saveToSession('userst', updatedUsers); // Save updated users array
     } else {
       
     }
 
 
-     const currentPosts = getFromSession('posts') || [];
+     const currentPosts = getFromSession('postst') || [];
      const targetPostIndex = currentPosts.findIndex((p) => p.id === Number(postId));
      if (targetPostIndex !== -1) {
          const updatedPost = {

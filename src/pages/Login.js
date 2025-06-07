@@ -41,14 +41,14 @@ const Login = () => {
     );
  
 
-    const users = getFromSession('users') || [];
+    const users = getFromSession('userst') || [];
     users.push(newUser);
     saveToSession('users', users);    
 
     const user = users.find(
       (u) => u.username === username
     );
-    saveToSession('currentUser', newUser);    
+    saveToSession('currentUsert', newUser);    
     setError('');
     navigate('/Profiledetails', { state: { message: 'User registered successfully!' } });
 

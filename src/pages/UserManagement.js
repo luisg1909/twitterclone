@@ -3,15 +3,15 @@ import { Table, Form } from 'react-bootstrap';
 import { getFromSession, saveToSession } from '../utils/SessionStorage';
 
 const UserManagement = () => {
-  const users = getFromSession('users') || [];
-  const currentUser = getFromSession('currentUser');
+  const users = getFromSession('userst') || [];
+  const currentUser = getFromSession('currentUsert');
 
   const handleRoleChange = (username, role) => {
     if (currentUser.role !== 'admin') return;
     const updatedUsers = users.map((user) =>
       user.username === username ? { ...user, role } : user
     );
-    saveToSession('users', updatedUsers);
+    saveToSession('userst', updatedUsers);
   };
 
   return (

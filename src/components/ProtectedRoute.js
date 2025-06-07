@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { getFromSession } from '../utils/SessionStorage';
 
 const ProtectedRoute = ({ element }) => {
-  const currentUser = getFromSession('currentUser');
+  const currentUser = getFromSession('currentUsert');
   return currentUser ? element : <Navigate to="/login" />;
 };
 

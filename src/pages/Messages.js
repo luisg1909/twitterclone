@@ -18,7 +18,7 @@ const MessagesPage = () => {
   const navigate = useNavigate();
   const message = location.state?.message;
   const [user, setUser] = useState(null);
-  const posts = getFromSession('posts') || [];
+  const posts = getFromSession('postst') || [];
   const [showAttachImage, setShowAttachImage] = useState(false);
   const [path, setPath] = useState(null);
   const [userMessages, setUserMessages] = useState([]);
@@ -41,7 +41,7 @@ const MessagesPage = () => {
     );
     posts.push(newPost);
 
-    saveToSession('posts', posts);
+    saveToSession('postst', posts);
     window.location.reload(); 
 
   };
@@ -52,7 +52,7 @@ const MessagesPage = () => {
   useEffect(() => {
     const currentUser = getCurrentUser();
 
-    const storedUsers = getFromSession('users') || [];
+    const storedUsers = getFromSession('userst') || [];
     setPath(getCurrentPath()); 
     const messages = getFromSession('messages') || [];
 

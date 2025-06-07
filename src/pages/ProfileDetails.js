@@ -13,7 +13,7 @@ import { Table, Alert } from 'react-bootstrap';
 
 const ProfileDetails = () => {
   const navigate = useNavigate();
-  const [users, setUsers] = useState(getFromSession('users') || []);
+  const [users, setUsers] = useState(getFromSession('userst') || []);
   const [editingUserId, setEditingUserId] = useState(null); // Track which user is being edited
   const [formData, setFormData] = useState({});
   const location = useLocation();
@@ -45,8 +45,8 @@ const ProfileDetails = () => {
     user.username === editingUserId ? { ...formData } : user
   );
   setUsers(updatedUsers);
-  saveToSession('users', updatedUsers); // Save updated users to sessionStorage
-  saveToSession('currentUser', formData);
+  saveToSession('userst', updatedUsers); // Save updated users to sessionStorage
+  saveToSession('currentUsert', formData);
   navigate('/Profile', { state: { message: 'User edited successfully!' } });
 
   };

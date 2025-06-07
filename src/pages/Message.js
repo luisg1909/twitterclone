@@ -16,7 +16,7 @@ import { Message } from '../utils/DataModel';
 import './Chat.css';
 
 const SendmessagePage = () => {
-  const users = getFromSession('users') || [];
+  const users = getFromSession('userst') || [];
   const navigate = useNavigate();
   var { FriendId } = useParams();
   const [friends, setFriends] = useState(null);
@@ -33,7 +33,7 @@ const SendmessagePage = () => {
     setFriends(friends);
     setFriendid(FriendId);
 
-    const storedUsers = getFromSession('users') || [];
+    const storedUsers = getFromSession('userst') || [];
     const currentUser = getCurrentUser();
     setCurrentUser(currentUser);
 

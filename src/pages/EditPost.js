@@ -9,7 +9,7 @@ const images = importAll(require.context('../assets/landscape', false, /\.(png|j
 
 const EditPost = () => {
   const { postId } = useParams();
-  const posts = getFromSession('posts') || [];
+  const posts = getFromSession('postst') || [];
   const post = posts.find((p) => p.id === Number(postId));
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ const EditPost = () => {
     post.image = formData.image;
 
     // Save updated posts to sessionStorage
-    saveToSession('posts', posts);
+    saveToSession('postst', posts);
 
     alert('Post updated successfully!');
     navigate('/');

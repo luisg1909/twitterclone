@@ -12,13 +12,16 @@ import { Friend } from '../utils/DataModel';
 import { useLocation} from 'react-router-dom';
 import { Table, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import './ProfilePage.css';
 
 const ProfilePage = () => {
-  const users = getFromSession('users') || [];
+
+  const users = getFromSession('userst') || [];
   const navigate = useNavigate();
   var { FriendId } = useParams();
   const [friends, setFriends] = useState(null);
   var [isOwnProfile, setIsOwnProfile] = useState(false);
+  const posts = getFromSession('postst') || [];
 
   const [user, setUser] = useState(null);
   const [IsFriend, setIsFriend] = useState(null);
@@ -29,7 +32,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const friends = getFromSession("friends") || [];
     setFriends(friends);
-    const storedUsers = getFromSession('users') || [];
+    const storedUsers = getFromSession('userst') || [];
 
 
       
@@ -74,195 +77,119 @@ const ProfilePage = () => {
 
   };
 
-  
-  const Removefriend = (e) => {
-    const currentUser = getCurrentUser();
-    let friends = getFromSession("friends") || [];
-  
-    // Remove the friend  for the current user
-    friends = friends.filter(
-      (f) => !(f.username === currentUser.username && f.friendId === FriendId)
-    );
-    
-    saveToSession("friends", friends);
-    setFriends(friends);
-    setIsFriend(null); // Remove UI "is friend" state
-   
-    navigate('/friends', { state: { message: 'Friend removed successfully.' } });
 
-
+  const profile = {
+    username: `${user.Firstname} ${user.Lastname}`,
+    handle: `@${user.username}`,
+    location: `${user.Hometown}`,
+    bio: `${user.AboutMe}`,
+    followers: 475,
+    following: 151,
+    tweets: 224,
+    likes: 8,
+    lists: 1,
+    profilePic:  `${process.env.PUBLIC_URL}/img/${user.ProfilePic}`,    
+    coverPic: `${process.env.PUBLIC_URL}/img/${user.BgPic}`, 
+    links: [
+     
+    ],
   };
-  const Addasfriend = (e) => {
-    const currentUser = getCurrentUser();
 
-
-    const newFriend = new Friend(
-      currentUser.username,
-      FriendId,
-       ''    
-    );
- 
-
-    const friends = getFromSession('friends') || [];
-    friends.push(newFriend);
-    saveToSession('friends', friends);    
-
-    navigate('/friends', { state: { message: 'Friend added successfully!' } });
-
-  };
-  
+  const tweets = [
+    {
+      text: "Early #90s #Microsoft #Windows desktops: a very cool custom Win 3.1 theme called Lipstick.",
+      img: "/img/tweet1.png",
+      hashtags: "#tech #geek #computing",
+    },
+    {
+      text: "A massively nerdy history of Twitter's default profile pics...",
+      img: "/img/tweet2.png",
+      hashtags: "#geek #socialmedia #history",
+    }
+  ];
 
   return (
-    <Container fluid className="bg-light p-3">
+    <div className="profile-page">
+      {/* Cover Image */}
+      <div className="cover-photo" style={{ backgroundImage: `url(${profile.coverPic})` }} />
 
+      {/* Profile and Info */}
+      <div className="container">
+        <div className="left-column">
+          <div className="profile-box">
+            <img src={profile.profilePic} className="avatar" alt="Profile" />
+            <h3>{profile.username}</h3>
+            <p className="text-muted">{profile.handle}</p>
+            <p>{profile.bio}</p>
+            {profile.links.map(link => (
+              <p key={link.label}><a href={link.url}>{link.url}</a></p>
+            ))}
+            <p><i className="text-muted">{profile.location}</i></p>
+          </div>
+          <div className="photo-grid">
+            <h6>Photos and videos</h6>
+            <img src="/img/tweet1.png" alt="img" />
+            <img src="/img/tweet2.png" alt="img" />
+          </div>
+        </div>
 
-      <Row className="mt-4">
-      {message && (
-        <Alert variant="success" className="mb-4">
-          {message}
-        </Alert>
-      )}
+        <div className="center-column">
+          <div className="stats-bar">
+            <div><a href="#"><strong>{profile.tweets}</strong></a><div className="label">Tweets</div></div>
+            <div><a href="#"><strong>{profile.following}</strong></a><div className="label">Following</div></div>
+            <div><a href="#"><strong>{profile.followers}</strong></a><div className="label">Followers</div></div>
+            <div><a href="#"><strong>{profile.likes}</strong></a><div className="label">Favourites</div></div>
+            <div><a href="#"><strong>{profile.lists}</strong></a><div className="label">Lists</div></div>
+         </div>
+          <div className="tweets">
 
-  
-        <Col md={3}>
-          <Card>
-            <Card.Body>
-              <Image
-                 src={`${process.env.PUBLIC_URL}/img/${user.ProfilePic}`}
-                 rounded
-                 fluid
-                 alt="Profile"
-              />
-              <Card.Text className="mt-3">View Photos of {user.Firstname} (17)</Card.Text>
-              <Link  style={{ textDecoration: 'none', color: 'inherit' }} to={`/sendmessage/${FriendId}`}>
-              <Card.Text>Send {user.Firstname} a Message</Card.Text>
-                      </Link>
-            
-            </Card.Body>
-          </Card>
+          {[...posts]
+              .filter(post => post.username === user?.username) 
+              .sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)) // ascending
+              .map((post, index) => {
+                const matchedUser = users.find((u) => u.username === post.username);               
+                const profilePic = matchedUser?.ProfilePic || 'default.jpg';
+                const usernameandlastname = `${matchedUser?.Firstname || ''} ${matchedUser?.Lastname || ''}`.trim();
+                return (
+                <div className="tweet-card">
+                  <strong>{post.username}</strong> <span className="text-muted">{profile.handle}</span>
+                  <p>{post.content}</p>
+                  <p className="hashtags"> #tech #geek #computing</p>
+                  {post.image && post.image.length > 0 && (
+                        <Image src={`${process.env.PUBLIC_URL}/img/${post.image}`} fluid />
+                      )}
+                  <div className="mt-2 text-muted" style={{ fontSize: '0.9rem' }}>
+                          Like · Comment · Share · Retweet
+                  </div>
+                </div>
 
-          <Card className="mt-3">
-            <Card.Header>Information</Card.Header>
-            <ListGroup variant="flush">
-              <ListGroup.Item>Networks: {user.Networks}</ListGroup.Item>
-              <ListGroup.Item>Birthday: {user.Month} {user.Day},  {user.Year}</ListGroup.Item>
-              <ListGroup.Item>Hometown:  {user.Hometown}</ListGroup.Item>
-              <ListGroup.Item>Relationship: {user.Relationship}</ListGroup.Item>
-            </ListGroup>
-          </Card>
-        </Col>
+              
+                 );
+            })}
 
-        {/* Main Content */}
-        <Col md={6}>
-          <Card>
-            <Card.Body>
-              <h5>
-              <strong style={{ textDecoration: 'none', color: '#003399' }}> {user.Firstname} {user.Lastname}</strong>
+          </div>
+        </div>
 
-               </h5>
-              <div className="d-flex gap-3 mb-3">
-                <span className="text-primary">Wall</span>
-                <span>Info</span>
-                <span>Photos</span>
-                <span>Boxes</span>
-              </div>
-
-              <h6>About Me</h6>
-              <p>
-                “{user.AboutMe} ”
-              </p>
-
-              <h6>Work and Education</h6>
-              <p><strong>Work:</strong> {user.Work}</p>
-              <p><strong>Education:</strong>  {user.Education}</p>
-
-              <h6>Likes and Interests</h6>
-              <p> {user.Interests}</p>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Right Column (Ads / Suggestions) */}
-        <Col md={3}>
-          <Card>
-            <Card.Body className="text-center">
-            {isOwnProfile ? (
-                       <div className="grid grid-cols-1 gap-1 p-4 text-center text-sm">
-                       <div className="flex flex-col items-center">
-                         <MdDynamicFeed size={24} />
-                         <span>News Feed</span>
-                       </div>
-                       <div className="flex flex-col items-center">
-                         <FaUser size={24} />
-                         <span>Profile</span>
-                       </div>
-                       <div className="flex flex-col items-center">  
-                         <a href={basename + "/#/friends"} style={{ textDecoration: 'none', color: 'inherit' }}>
-                         <FaUserFriends size={24} />
-                         <span>Friends</span>
-                         </a> 
-                       </div>
-                       <div className="flex flex-col items-center">
-                         <FaImages size={24} />
-                         <span>Photos</span>
-                       </div>
-                       <div className="flex flex-col items-center">
-                         <FaCalendarAlt size={24} />
-                         <span>Events</span>
-                       </div>
-                       <div className="flex flex-col items-center">
-                       <a href={basename + "/#/messages"} style={{ textDecoration: 'none', color: 'inherit' }}>
-                       <FaInbox size={24} />
-                         <span>Messages</span>
-                       </a>                         
-                       </div>
-                       <div className="flex flex-col items-center">  
-                         <FaUserPlus size={24} />
-                         <span>Requests</span>
-                       </div>
-                     </div>     
-
-            ) : (
-              <div className="grid grid-cols-1 gap-1 p-4 text-center text-sm">
-
-                      <Link to={`/sendmessage/${FriendId}`}>
-                        <Button  variant="primary" className="w-50">
-                      Send message
-                        </Button>
-                      </Link>
-
-
-           
-              </div>
-            )}
-            </Card.Body>
-            <Card.Body className="text-center">
-
-            {isOwnProfile  ? (
-              <Button onClick={gotoEdit} variant="success" className="w-50">
-              Edit data
-              </Button>
-
-            ) : (
-              IsFriend ? (
-
-                <Button onClick={Removefriend} variant="danger" className="w-50">
-                Remove friend
-                </Button>
-              ) : (
-                <Button onClick={Addasfriend} variant="success" className="w-50">
-               Add as a friend
-                </Button>
-              )
-
-            )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-   
-    </Container>
+        <div className="right-column">
+          <div className="follow-box">
+            <h6>Who to follow</h6>
+            <ul className="list-unstyled">
+              <li>TheNoisySongbird <button>Follow</button></li>
+              <li>SophieDiddles <button>Follow</button></li>
+              <li>darksidedeeb <button>Follow</button></li>
+            </ul>
+          </div>
+          <div className="trends-box">
+            <h6>Trends</h6>
+            <ul>
+              <li>#PlayHeroes</li>
+              <li>#BeatlesRecipes</li>
+              <li>#GameOfThrones</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
