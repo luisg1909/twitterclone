@@ -92,6 +92,7 @@ const Home = () => {
 
     {/* Avatar overlapping bottom-left */}
     <div style={{ position: 'relative' }}>
+    <Link to={`/profile/${user.username}`}>
       <img
         src={`${process.env.PUBLIC_URL}/img/${user.ProfilePic}`}
         className="rounded-circle border border-white"
@@ -104,8 +105,9 @@ const Home = () => {
           left: '15px',
         }}
       />
+      </Link>
       <div className="pt-5 px-3 pb-3">
-        <h5 className="mb-0">{user.name || 'Kaley'}</h5>
+        <h5 className="mb-0">{user.Firstname || 'Kaley'}</h5>
         <p className="text-muted mb-2">@{user.username || 'yang_bo_dudnik'}</p>
         <div className="d-flex justify-content-around text-center border-top pt-2">
           <div><strong>24.8K</strong><br />Tweets</div>

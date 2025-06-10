@@ -1,0 +1,16 @@
+.login-bg {
+  background: #ccf0ff url('2025-06-10_053820.jpg') repeat;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.login-card {
+  background: white;
+  border: 1px solid #ccc;
+}
+
+.login-side-box {
+  background-color: #f0fbcc;
+  border: 1px solid #d2e59e;
+  font-size: 0.9rem;
+}

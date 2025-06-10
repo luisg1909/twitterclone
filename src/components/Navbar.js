@@ -13,6 +13,7 @@ import {  Row, Col, Form, Card} from 'react-bootstrap';
 import {  Button, Alert } from 'react-bootstrap';
 import { getCurrentPath } from '../utils/Auth';
 import { Link } from 'react-router-dom';
+import './Navbar.css';
 
 const AppNavbar = () => {
 
@@ -24,7 +25,10 @@ const AppNavbar = () => {
 
   const users = getFromSession('userst') || [];
   const posts = getFromSession('postst') || [];
-
+  const handleLogout = () => {
+    logout();
+    navigate( '/login');
+  };
   useEffect(() => {
     const storedUsers = getFromSession('userst') || [];
     setPath(getCurrentPath()); 
@@ -128,7 +132,7 @@ console.log("current users login: ",storedUsers)
        newPost = new Post(    
         'Jack.Dorsey',
         'Welcome to twitter',
-        '2025-06-07_065445.jpg',
+        '2025-06-05_065445.jpg',
         '2025-06-06T18:21:22.444Z',
         '0'
       );
@@ -150,51 +154,62 @@ console.log("current users login: ",storedUsers)
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom px-3 sticky-top">
-      <div className="d-flex align-items-center w-100 justify-content-between">
-        <div className="d-flex align-items-center gap-4">
-          <a className="nav-link text-primary d-flex align-items-center" href="#">
-            <FaUser className="me-1" /> Home
-          </a>
-          <a className="nav-link text-dark d-flex align-items-center" href="#">
-            <FaCalendarAlt className="me-1" /> Moments
-          </a>
-          <a className="nav-link text-dark d-flex align-items-center" href="#">
-            <FaInbox className="me-1" /> Notifications
-          </a>
-          <a className="nav-link text-dark d-flex align-items-center" href="#">
-            <FaUserPlus className="me-1" /> Messages
-          </a>
-        </div>
-        <FaUserFriends className="text-primary fs-4" />
-        <div className="d-flex align-items-center gap-3">
-            {/* Search bar */}
-            <div className="input-group" style={{ maxWidth: '200px' }}>
-              <input className="form-control rounded-pill" placeholder="Search Twitter" />
-              <span className="input-group-text bg-white border-0">
-                <FaSearch />
-              </span>
-            </div>
+    <div className="d-flex align-items-center w-100 justify-content-between">
+      <div className="d-flex align-items-center gap-4">
+        <a className="nav-link text-primary d-flex align-items-center" href="#">
+          <FaUser className="me-1" /> Home
+        </a>
+        <a className="nav-link text-dark d-flex align-items-center" href="#">
+          <FaCalendarAlt className="me-1" /> Moments
+        </a>
+        <a className="nav-link text-dark d-flex align-items-center" href="#">
+          <FaInbox className="me-1" /> Notifications
+        </a>
+        <a className="nav-link text-dark d-flex align-items-center" href="#">
+          <FaUserPlus className="me-1" /> Messages
+        </a>
+      </div>
+      <FaUserFriends className="text-primary fs-4" />
+      <div className="d-flex align-items-center gap-3 justify-content-end flex-shrink-0">
 
-            {/* Profile avatar */}
-            {user && (
-                   <Link to={`/profile/${user.username}`}>
-                    <img
-                    src={`${process.env.PUBLIC_URL}/img/${user.ProfilePic}`}
-                    alt="avatar"
-                    className="rounded-circle"
-                    style={{ width: '35px', height: '35px', objectFit: 'cover' }}
-                  />
-                    </Link>
-            
+          {/* Search bar */}
+          <div className="input-group" style={{ maxWidth: '200px' }}>
+            <input className="form-control rounded-pill" placeholder="Search Twitter" />
+            <span className="input-group-text bg-white border-0">
+              <FaSearch />
+            </span>
+          </div>
+
+          {user && (
+          <NavDropdown
+            title={
+              <Image
+                src={`${process.env.PUBLIC_URL}/img/${user.ProfilePic}`}
+                roundedCircle
+                style={{ width: '35px', height: '35px', objectFit: 'cover' }}
+              />
+            }
+            id="nav-profile-dropdown"
+            align="end"
+          >
+            <NavDropdown.Item href={basename + "#/friends"}>Edit Friends</NavDropdown.Item>
+            <NavDropdown.Item href="#/account-settings">Account Settings</NavDropdown.Item>
+            <NavDropdown.Item href="#/privacy-settings">Privacy Settings</NavDropdown.Item>
+            <NavDropdown.Item href="#/app-settings">Application Settings</NavDropdown.Item>
+            <NavDropdown.Item href="#/help">Help Center</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+          </NavDropdown>
             )}
 
-            {/* Tweet button */}
-            <button className="btn btn-primary d-flex align-items-center">
-              <FaImages className="me-2" /> Tweet
-            </button>
-          </div>
-      </div>
-    </nav>
+          {/* Tweet button */}
+          <button className="btn btn-primary d-flex align-items-center">
+            <FaImages className="me-2" /> Tweet
+          </button>
+        </div>
+    </div>
+  </nav>
+     
   );
 };
 
